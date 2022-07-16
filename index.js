@@ -1,12 +1,28 @@
 // Require the necessary discord.js classes
-const { Client, Intents } = require('discord.js');
+const { Client, Intents, MessageAttachment } = require('discord.js');
+
+// const { request } = require('undici');
+
+const fetch = (...args) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 const dotenv = require('dotenv');
 
 dotenv.config();
 
 // Create a new client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+});
+
+// async function getJSONResponse(body) {
+//   let fullBody = '';
+
+//   for await (const data of body) {
+//     fullBody += data.toString();
+//   }
+//   return JSON.parse(fullBody);
+// }
 
 // When the client is ready, run this code (only once)
 client.once('ready', () => {
@@ -26,6 +42,33 @@ client.on('interactionCreate', async (interaction) => {
     );
   } else if (commandName === 'user') {
     await interaction.reply('User info.');
+  } else if (commandName === 'wow') {
+    const memeResult = await fetch(
+      'https://owen-wilson-wow-api.herokuapp.com/wows/random'
+    );
+    const memeFile = await memeResult.json();
+    console.log(memeFile[0]);
+
+    const file = memeFile[0].video['1080p'];
+    console.log(file);
+    await interaction.reply({
+      files: [{ attachment: file }],
+    });
+  }
+});
+
+client.on('messageCreate', async (message) => {
+  if (message.content.includes('wow')) {
+    const memeResult = await fetch(
+      'https://owen-wilson-wow-api.herokuapp.com/wows/random'
+    );
+    const memeFile = await memeResult.json();
+    console.log(memeFile[0]);
+
+    const file = memeFile[0].video['1080p'];
+    const attachment = new MessageAttachment(file);
+    console.log(file);
+    await message.reply({ content: 'You said Wow', files: [attachment] });
   }
 });
 

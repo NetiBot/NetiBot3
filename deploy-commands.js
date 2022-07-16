@@ -12,7 +12,7 @@ const commands = [
     .setName('ping')
     .setDescription('Replies with pong!'),
   new SlashCommandBuilder()
-    .setName('server')
+    .setName('wow')
     .setDescription('Replies with server info!'),
   new SlashCommandBuilder()
     .setName('user')

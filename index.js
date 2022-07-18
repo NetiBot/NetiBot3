@@ -34,14 +34,32 @@ client.on('interactionCreate', async (interaction) => {
 
   const { commandName } = interaction;
 
-  if (commandName === 'ping') {
-    await interaction.reply('Pong!');
-  } else if (commandName === 'server') {
-    await interaction.reply(
-      `Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`
+  if (commandName === 'meme') {
+    const memeResult = await fetch(
+      'https://meme-api.herokuapp.com/gimme/memes'
     );
-  } else if (commandName === 'user') {
-    await interaction.reply('User info.');
+    const memeFile = await memeResult.json();
+
+    const file = memeFile.url;
+    console.log(file);
+    await interaction.reply({
+      files: [{ attachment: file }],
+    });
+  } else if (commandName === 'cat') {
+    const memeResult = await fetch('https://meowfacts.herokuapp.com');
+    const memeFile = await memeResult.json();
+    console.log(memeFile);
+
+    const file = memeFile.data;
+    // console.log(file);
+    await interaction.reply(`${file}`);
+  } else if (commandName === 'chuck') {
+    const memeResult = await fetch('https://api.chucknorris.io/jokes/random');
+    const memeFile = await memeResult.json();
+
+    const file = memeFile.value;
+    console.log(file);
+    await interaction.reply(`${file}`);
   } else if (commandName === 'wow') {
     const memeResult = await fetch(
       'https://owen-wilson-wow-api.herokuapp.com/wows/random'
@@ -59,6 +77,9 @@ client.on('interactionCreate', async (interaction) => {
 
 client.on('messageCreate', async (message) => {
   if (message.content.includes('wow')) {
+    if (message.author.bot) {
+      return;
+    }
     const memeResult = await fetch(
       'https://owen-wilson-wow-api.herokuapp.com/wows/random'
     );
@@ -68,7 +89,14 @@ client.on('messageCreate', async (message) => {
     const file = memeFile[0].video['1080p'];
     const attachment = new MessageAttachment(file);
     console.log(file);
-    await message.reply({ content: 'You said Wow', files: [attachment] });
+    await message.reply({ content: 'You said "wow"', files: [attachment] });
+  } else if (message.content.includes('sad')) {
+    if (message.author.bot) {
+      return;
+    }
+    const file = 'https://www.youtube.com/watch?v=1q6Swwvp5qk';
+    console.log(file);
+    await message.reply(`You said "sad"\n ${file}`);
   }
 });
 

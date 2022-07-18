@@ -9,14 +9,17 @@ dotenv.config();
 
 const commands = [
   new SlashCommandBuilder()
-    .setName('ping')
-    .setDescription('Replies with pong!'),
+    .setName('meme')
+    .setDescription('Responds with a random meme!'),
   new SlashCommandBuilder()
     .setName('wow')
-    .setDescription('Replies with server info!'),
+    .setDescription('Replies with a random Own Wilson Wow!'),
   new SlashCommandBuilder()
-    .setName('user')
-    .setDescription('Replies with user info!'),
+    .setName('chuck')
+    .setDescription('Replies with Chuck Norris Joke'),
+  new SlashCommandBuilder()
+    .setName('cat')
+    .setDescription('Replies with cat fact!'),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);

@@ -1,4 +1,6 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+// const { SlashCommandBuilder } = require('@discordjs/builders');
+const fs = require('node:fs');
+const path = require('node:path');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 // const { clientId, guildId } = require('./config.json');
@@ -7,20 +9,32 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const commands = [
-  new SlashCommandBuilder()
-    .setName('meme')
-    .setDescription('Responds with a random meme!'),
-  new SlashCommandBuilder()
-    .setName('wow')
-    .setDescription('Replies with a random Own Wilson Wow!'),
-  new SlashCommandBuilder()
-    .setName('chuck')
-    .setDescription('Replies with Chuck Norris Joke'),
-  new SlashCommandBuilder()
-    .setName('cat')
-    .setDescription('Replies with cat fact!'),
-].map((command) => command.toJSON());
+// const commands = [
+//   new SlashCommandBuilder()
+//     .setName('meme')
+//     .setDescription('Responds with a random meme!'),
+//   new SlashCommandBuilder()
+//     .setName('wow')
+//     .setDescription('Replies with a random Own Wilson Wow!'),
+//   new SlashCommandBuilder()
+//     .setName('chuck')
+//     .setDescription('Replies with Chuck Norris Joke'),
+//   new SlashCommandBuilder()
+//     .setName('cat')
+//     .setDescription('Replies with cat fact!'),
+// ].map((command) => command.toJSON());
+
+const commands = [];
+const commandsPath = path.join(__dirname, 'commands');
+const commandFiles = fs
+  .readdirSync(commandsPath)
+  .filter((file) => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+  const filePath = path.join(commandsPath, file);
+  const command = require(filePath);
+  commands.push(command.data.toJSON());
+}
 
 const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
 
